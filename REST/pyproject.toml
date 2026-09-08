@@ -1,0 +1,22 @@
+[project]
+name = "rest"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Satria Manggala Putra Pratama", email = "satriampp@proton.me" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "psycopg[binary]>=3.2.0",
+    "psycopg_pool>=3.2.0",
+    "sqlalchemy>=2.0.52",
+]
+
+[project.scripts]
+rest = "rest:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
