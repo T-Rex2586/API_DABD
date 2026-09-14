@@ -19,7 +19,7 @@ PostgreSQL `kampus`, sekaligus eksplorasi aspek keamanan & performa GraphQL.
 | `Database/` | `Kampus.sql` (schema + seed), `security.sql` (role + RLS), `docker-compose.yml` |
 | `REST/` | FastAPI, endpoint `/api/...` (+ `/docs`) |
 | `graphql/` | PostGraphile v5 + Express + plugin keamanan (`plugins.js`) |
-| `demo/` | Aset demo: query GraphQL, request REST, skrip hitung round-trip |
+| `demo/` | Aset demo: query GraphQL & skrip hitung round-trip |
 
 ## Menjalankan (urutan)
 
@@ -44,12 +44,21 @@ uv run uvicorn rest.app:app --port 8000
 ```powershell
 cd graphql
 npm install
-npm run dev        # dev: GraphiQL aktif, introspection aktif
+npm run dev
 ```
-Mode production (keamanan ketat):
+GraphiQL: `http://localhost:4000/` (**selalu aktif**).
+
+Mode production (introspection OFF + persisted operations ketat; GraphiQL tetap
+aktif agar bisa diuji dari browser):
 ```powershell
 $env:NODE_ENV = "production"; node server.js
 ```
+
+## Cara menguji (UI web)
+
+- **REST** → Swagger di `http://127.0.0.1:8000/docs` (Try it out → Execute).
+- **GraphQL** → GraphiQL di `http://localhost:4000/` (tempel query → Run).
+  Tab **Headers** untuk RLS, **Variables** untuk variabel, **Explain** untuk N+1.
 
 ## Checklist verifikasi
 
@@ -58,11 +67,11 @@ $env:NODE_ENV = "production"; node server.js
 | 1 | DB ter-seed | `docker exec postgres-kampus psql -U postgres -d kampus -c "select count(*) from mahasiswa;"` | 500 |
 | 2 | REST hidup | `GET http://127.0.0.1:8000/docs` | 200 |
 | 3 | GraphQL hidup | buka `http://localhost:4000/` | GraphiQL tampil |
-| 4 | Query bertingkat | `demo/graphql/01-nested.graphql` | data + **1 SQL** (lihat Explain) |
-| 5 | Depth limit | query sangat dalam (lihat `03` catatan) | ditolak `exceeds operation depth limits` |
-| 6 | Introspection prod | `NODE_ENV=production` lalu query `__schema` | ditolak `GraphQL introspection has been disabled` |
-| 7 | Persisted ops (prod) | kirim `{ "id": "GetAllFakultas" }` | 200; tanpa id / id asing | ditolak `400` |
-| 8 | RLS | header `x-demo-role: kampus_mahasiswa`, `x-demo-mahasiswa-id: 1` | `allKrs.totalCount` 1200 → 3, `allMahasiswas` 500 → 1 |
+| 4 | Query bertingkat | GraphiQL: query mahasiswa→KRS→kelas (lihat `TESTING.md` D1) | data + **1 SQL** (tab Explain) |
+| 5 | Depth limit | GraphiQL: query sangat dalam (`TESTING.md` C1) | ditolak `exceeds operation depth limits` |
+| 6 | Introspection prod | `NODE_ENV=production` lalu query `__schema` di GraphiQL | ditolak `GraphQL introspection has been disabled` |
+| 7 | Persisted ops (prod) | kirim body `{ "id": "GetAllFakultas" }` (di luar GraphiQL) | 200; tanpa id / id asing ditolak `400` |
+| 8 | RLS | GraphiQL tab Headers: `x-demo-role: kampus_mahasiswa`, `x-demo-mahasiswa-id: 1` | `allKrs.totalCount` 1200 → 3, `allMahasiswas` 500 → 1 |
 
 ## REST vs GraphQL — apple to apple
 

@@ -33,7 +33,7 @@ const preset = {
     grafserv: {
         port: 4000,
         host: "::",
-        graphiql: process.env.NODE_ENV !== "production",
+        graphiql: true,
         persistedOperations: {
             GetAllFakultas:
                 "{ allFakultas { nodes { fakultasId kodeFakultas namaFakultas } } }",
