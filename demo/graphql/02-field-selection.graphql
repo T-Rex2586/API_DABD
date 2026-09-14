@@ -1,0 +1,29 @@
+# Field selection: ambil HANYA yang dibutuhkan (hindari over-fetching).
+# Bandingkan dengan REST yang mengembalikan seluruh kolom per resource.
+
+# Butuh hanya nama dosen? -> cukup:
+query NamaDosenSaja {
+    allMahasiswas(first: 5) {
+        nodes {
+            krsByMahasiswaId {
+                nodes {
+                    kelasByKelasId {
+                        dosenByDosenId {
+                            namaDosen
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# Butuh tampilan ringkas: pilih subset field saja.
+query Ringkas {
+    allMahasiswas(first: 5) {
+        nodes {
+            nim
+            namaMahasiswa
+        }
+    }
+}

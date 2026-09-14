@@ -1,0 +1,25 @@
+@base = http://127.0.0.1:8000
+@nim = M0000001
+@krsId = 1
+
+### 1) Profil mahasiswa (prodi + fakultas)
+GET {{base}}/api/mahasiswa/{{nim}}
+
+### 2) KRS mahasiswa (kelas, matkul, dosen, jadwal, ruangan)
+GET {{base}}/api/mahasiswa/{{nim}}/krs
+
+### 3) Nilai + presensi untuk 1 KRS
+# Untuk demo apple-to-apple, jalankan ini SEKALI PER krs_id dari hasil (2).
+GET {{base}}/api/krs/{{krsId}}/hasil
+
+### 4) Upsert presensi (insert/update)
+POST {{base}}/api/krs/{{krsId}}/presensi
+Content-Type: application/json
+
+{
+    "pertemuan_ke": 3,
+    "status_kehadiran": "Hadir"
+}
+
+### OpenAPI / Swagger
+GET {{base}}/docs

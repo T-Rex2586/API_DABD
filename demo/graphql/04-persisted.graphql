@@ -1,0 +1,33 @@
+# Persisted operations (query allow-list) — hanya relevan saat NODE_ENV=production.
+#
+# Di dev, allowUnpersistedOperation = true, jadi query bebas boleh.
+# Di production, hanya dua operasi di bawah yang diizinkan (didaftarkan di
+# graphql/graphile.config.js -> grafserv.persistedOperations).
+#
+# Cara kirim via HTTP (tanpa field "query", cukup "id"):
+#   { "id": "GetAllFakultas" }
+#   { "id": "GetMahasiswaByNim", "variables": { "nim": "M0000001" } }
+#
+# Hasil:
+#   - id terdaftar            -> 200 + data
+#   - tanpa id / id tak dikenal -> 400 "Persisted operations are enabled ..."
+
+# id: GetAllFakultas
+query GetAllFakultas {
+    allFakultas {
+        nodes {
+            fakultasId
+            kodeFakultas
+            namaFakultas
+        }
+    }
+}
+
+# id: GetMahasiswaByNim  (variables: { "nim": "M0000001" })
+query GetMahasiswaByNim($nim: String!) {
+    mahasiswaByNim(nim: $nim) {
+        nim
+        namaMahasiswa
+        angkatan
+    }
+}

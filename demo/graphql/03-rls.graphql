@@ -1,0 +1,42 @@
+# RLS: query SAMA, header beda -> hasil beda.
+# Header di GraphiQL/Ruru (tab Headers) atau via HTTP.
+#
+#   TANPA header                       -> role superuser (semua)
+#   x-demo-role: kampus_mahasiswa
+#   x-demo-mahasiswa-id: 1             -> hanya baris milik mahasiswa tsb
+#
+# Ekspektasi:
+#   tanpa header                     : allKrs.totalCount = 1200, allMahasiswas = 500
+#   dengan header (mahasiswa id = 1) : allKrs.totalCount = 3,    allMahasiswas = 1
+
+query RlsProbe {
+    allKrs {
+        totalCount
+    }
+    allMahasiswas {
+        totalCount
+    }
+}
+
+# Hanya akses datanya sendiri:
+query DataSaya {
+    mahasiswaByNim(nim: "M0000001") {
+        nim
+        namaMahasiswa
+        krsByMahasiswaId {
+            nodes {
+                krsId
+                kelasByKelasId {
+                    namaKelas
+                    mataKuliahByMatkulId {
+                        namaMatkul
+                    }
+                }
+                nilaiAkhirByKrsId {
+                    nilaiAngka
+                    nilaiHuruf
+                }
+            }
+        }
+    }
+}

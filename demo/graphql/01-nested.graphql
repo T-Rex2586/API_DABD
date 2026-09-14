@@ -1,0 +1,39 @@
+# Query bertingkat: mahasiswa -> KRS -> kelas -> matkul + dosen -> nilai
+# Endpoint: POST http://127.0.0.1:4000/graphql
+# Bukti N+1: satu request ini menghasilkan 1 SQL (lihat extensions.explain.operations).
+query Nested($nim: String!) {
+    mahasiswaByNim(nim: $nim) {
+        nim
+        namaMahasiswa
+        angkatan
+        programStudiByProdiId {
+            namaProdi
+            fakultasByFakultasId {
+                kodeFakultas
+                namaFakultas
+            }
+        }
+        krsByMahasiswaId {
+            nodes {
+                krsId
+                statusPersetujuan
+                kelasByKelasId {
+                    namaKelas
+                    semester
+                    mataKuliahByMatkulId {
+                        kodeMatkul
+                        namaMatkul
+                        sks
+                    }
+                    dosenByDosenId {
+                        namaDosen
+                    }
+                }
+                nilaiAkhirByKrsId {
+                    nilaiAngka
+                    nilaiHuruf
+                }
+            }
+        }
+    }
+}

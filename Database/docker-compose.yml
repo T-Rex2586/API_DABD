@@ -12,6 +12,7 @@
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./Kampus.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./security.sql:/docker-entrypoint-initdb.d/zz_security.sql
 
 volumes:
   pgdata:
